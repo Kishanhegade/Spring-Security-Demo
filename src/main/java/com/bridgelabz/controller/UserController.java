@@ -29,7 +29,8 @@ public class UserController {
 
     @GetMapping("/login")
     public String login(@RequestBody User user) {
-        return "Success";
+
+        return userService.verify(user);
     }
 
 

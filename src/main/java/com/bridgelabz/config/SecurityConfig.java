@@ -30,10 +30,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("login/**","register/**")
+                                .requestMatchers("login","register/**")
                                 .permitAll()
-                                .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+                                .anyRequest()
+                                .authenticated())
+                //.formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session

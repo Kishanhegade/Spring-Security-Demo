@@ -1,7 +1,6 @@
 package com.bridgelabz.service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -21,7 +19,7 @@ public class JWTService {
 
     private String createJwt(String username){
         return Jwts.builder()
-                .setClaims(Map.of("username",username))
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+60*60*1000))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
@@ -34,10 +32,6 @@ public class JWTService {
 
     public String generateAccessToken(String username){
         return createJwt(username);
-    }
-    public Claims parseJwt(String token) {
-        JwtParser parser = Jwts.parserBuilder().setSigningKey(getSigninKey()).build();
-        return parser.parseClaimsJws(token).getBody();
     }
 
     public String extractUsername(String token) {
@@ -57,7 +51,7 @@ public class JWTService {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

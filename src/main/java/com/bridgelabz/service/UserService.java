@@ -15,12 +15,13 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final AuthenticationManager authManager;
-
+    private final JWTService jwtService;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public UserService(UserRepository userRepo, AuthenticationManager authManager) {
+    public UserService(UserRepository userRepo, AuthenticationManager authManager, JWTService jwtService) {
         this.userRepo = userRepo;
         this.authManager = authManager;
+        this.jwtService = jwtService;
     }
 
 
@@ -43,7 +44,7 @@ public class UserService {
                 new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword())
         );
         if(authentication.isAuthenticated()) {
-            return "Login Success";
+            return jwtService.generateAccessToken(user.getUsername());
         }
 
         return "Login failure";
